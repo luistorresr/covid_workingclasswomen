@@ -1,0 +1,255 @@
+
+/***************************************************************************************/
+/*	UKHLS Covid-19 survey 2020-21								*/
+/* 	SPSS Base recodes									*/
+/* 	Created 2-6-21										*/
+/* 												*/
+/* 	Project											*/
+/*	‘Carrying the work burden of the Covid-19 pandemic: working class women in the UK’		*/
+/* 	Lead: 	Tracey Warren									*/
+/*	Funder: 	ESRC (Project ES/V009400/1)							*/
+/* 	Data:	Covid wave A (April 2020)	DOI: 10.5255/UKDA-SN-8644-9				*/
+/***************************************************************************************/
+
+By searching and replace cA_ in the variable name (with e.g. cB_ or cH_), re-coded variables can be replicated for subsequent waves of data (if the variables are available in that wave and if it is an appropriate recode for later waves).
+
+
+/*****************************/
+/* A 	Employment experiences  */
+/*****************************/
+
+/** 	[1] Who was employed? 
+/* 	Before and after the pandemic
+RECODE cA_sempderived  (1 thru 3=1) (else =0) INTO cA_employ.
+VARIABLE LABELS  cA_employ  'Employed in April 2020?'.
+add value labels cA_employ  
+	0 'No'
+                1 'Yes' .
+RECODE cA_blwork  (1 thru 3=1) (else =0) INTO cA_blemploy.
+VARIABLE LABELS  cA_blemploy  'Employed in Jan/Feb 2020?'.
+add value labels cA_blemploy  
+	0 'No'
+                1 'Yes' .
+
+/** 	[2] What hours were worked in job(s)
+/* 	What hours were worked BEFORE the pandemic? (at baseline in January/February 2020)
+/*	Who was employed but reported working no hours in their job(s)
+do if (cA_blhours =0) . 
+compute cA_blPTb=0.
+else if (cA_blhours gt 0 and cA_blhours lt 30) . 
+compute cA_blPTb=1.
+else if (cA_blhours ge 30 ) . 
+compute cA_blPTb=2.
+end if.
+VARIABLE LABELS  cA_blPTb 'Hours worked Jan/Feb 2020'.
+add value labels cA_blPTb 
+	0 '0' 
+                1 'Part-time' 
+	2 'Full-time' .
+
+do if (cA_blhours =0) . 
+compute cA_blsPTb=0.
+else if (cA_blhours gt 0 and cA_blhours lt 20) . 
+compute cA_blsPTb=1.
+else if (cA_blhours ge 20 and cA_blhours lt 30) . 
+compute cA_blsPTb=2.
+else if (cA_blhours ge 30 ) . 
+compute cA_blsPTb=3.
+end if.
+VARIABLE LABELS  cA_blsPTb 'Hours worked Jan/Feb 2020'.
+add value labels cA_blsPTb 
+	0 'Baseline 0 hours'
+                1 'Baseline Short Part-time'
+                2  'Baseline Long Part-time' 
+	3 'Baseline Full-time' .
+
+/** 	What hours were worked AFTER the pandemic?
+/* 	Who was employed but reported working no hours in their job(s)
+/* 	 variable cA_hours: hours last week
+do if (cA_hours =0) . 
+compute cA_PTb=0.
+else if (cA_hours gt 0 and cA_hours lt 30) . 
+compute cA_PTb=1.
+else if (cA_hours ge 30 ) . 
+compute cA_PTb=2.
+end if.
+VARIABLE LABELS  cA_PTb 'Hours worked last survey'.
+add value labels cA_PTb 
+	0 '0'
+                1 'Part-time'  
+2 'Full-time' .
+
+do if (cA_hours =0) . 
+compute cA_sPTb=0.
+else if (cA_hours gt 0 and cA_hours lt 20) . 
+compute cA_sPTb=1.
+else if (cA_hours ge 20 and cA_hours lt 30) . 
+compute cA_sPTb=2.
+else if (cA_hours ge 30 ) . 
+compute cA_sPTb=3.
+end if.
+VARIABLE LABELS  cA_sPTb 'Hours worked last survey'.
+add value labels cA_sPTb 
+	0 '0 hours'
+                1 'Short Part-time'
+                2  'Long Part-time' 
+	3 'Full-time' .
+ 
+
+/** 	[3] Who was working at home?
+/*	Who was never working at home?
+/*	Who was always or often working at home?
+do if (cc_wah=1 or cc_wah=2 or cc_wah=3) . 
+compute cc_WAH2=1.
+else if (cc_wah =4) . 
+compute cc_WAH2=2.
+end if.
+VARIABLE LABELS  cc_WAH2 'Working at home'.
+add value labels cc_WAH2 1 'Yes: always/often/sometimes' 2 'No: never'.
+
+do if (cc_wah=1 or cc_wah=2) . 
+compute cc_WAH3=1.
+else if (cc_wah =4 or cc_wah=3) . 
+compute cc_WAH3=2.
+end if.
+VARIABLE LABELS  cc_WAH3 'Working at home'.
+add value labels cc_WAH3 1 'Yes: always/often' 2 'Sometimes/never'.
+
+
+
+/*******************************/
+/* B 	Housework and caring	    */
+/*******************************/
+
+
+/** 	[1] How many hours were spent on housework and child-care?
+/* 	Before and after the pandemic
+RECODE cA_howlng_cv (0=0) (SYSMIS=SYSMIS) (1 thru 10=1) (11 thru 20=2) (21 thru 40=3) (41 thru 
+    Highest=4) INTO cA_house.
+VARIABLE LABELS  cA_house 'Housework hours'.
+add value labels cA_house 
+	0 '0'
+                1 '1-10' 
+	2 '11-20' 
+	3 '21-40'
+                4 '41+' .
+RECODE cA_timechcare (0=0) (SYSMIS=SYSMIS) (1 thru 10=1) (11 thru 20=2) (21 thru 40=3) (41 thru 
+    Highest=4) INTO cA_time_kid.
+VARIABLE LABELS  cA_time_kid 'Time spent on child-care or home-schooling'.
+add value labels cA_time_kid 
+	0 '0'
+                1 '1-10' 
+	2 '11-20' 
+	3 '21-40'
+                4 '41+' .
+
+
+/** 	[2] Who does the housework in couples?
+/* 	The following variables are not available until Wave C
+RECODE cC_hubuys_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_hubuys2.
+VARIABLE LABELS  cC_hubuys2 'Grocery shopping'.
+value labels cC_hubuys2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_hudiy_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_hudiy2.
+VARIABLE LABELS  cC_hudiy2 'DIY jobs'.
+value labels cC_hudiy2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_hufrys_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_hufrys2.
+VARIABLE LABELS  cC_hufrys2 'Cooking'.
+value labels cC_hufrys2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_huiron_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_huiron2.
+VARIABLE LABELS  cC_huiron2 'Washing/ironing'.
+value labels cC_huiron2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_humops_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_humops2.
+VARIABLE LABELS  cC_humops2 'Cleaning'.
+value labels cC_humops2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_hupots_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_hupots2.
+VARIABLE LABELS  cC_hupots2 'Gardening'.
+value labels cC_hupots2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_husits_cv (1 thru 2=1) (3=2) (4 thru 5=3) (6 thru 7 = 4) INTO cC_husits2.
+VARIABLE LABELS  cC_husits2 'Child-care'.
+value labels cC_husits2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else'.
+
+RECODE cC_huschools (1 thru 2=1) (3=2) (4 thru 5=3) (6 = 4) (7=5) INTO cC_huschools2.
+VARIABLE LABELS  cC_huschools2 'Home-schooling'.
+value labels cC_huschools2 1 'Always/usually me' 2 'About equal with partner' 3 'Always/usually partner' 4 'Someone else in the household' 5 'Children themselves'.
+
+
+/*******************************/
+/* C 	Finances			    */
+/*******************************/
+
+
+/** 	[1] Weekly non-zero pay?
+/* 	Take home pay, all earnings and self employed. Non-0 pay only.
+
+do if (cA_blpay_amount gt 0) . 
++    do if (cA_blpay_period=1 or cA_blpay_period =5).
++    compute cA_blwk_pay= cA_blpay_amount.
++    else if (cA_blpay_period=2).
++    compute cA_blwk_pay= (cA_blpay_amount/2).
++    else if (cA_blpay_period=3).
++    compute cA_blwk_pay= (cA_blpay_amount/4.33).
++    else if (cA_blpay_period=4).
++    compute cA_blwk_pay= (cA_blpay_amount/52.14).
++    end if.
+end if.
+variable label cA_blwk_pay 'Weekly Baseline net pay. Non 0 pay only'.
+
+do if (cA_netpay_amount gt 0) . 
++    do if (cA_netpay_period=1 or cA_netpay_period =5).
++    compute cA_wk_pay= cA_netpay_amount.
++    else if (cA_netpay_period=2).
++    compute cA_wk_pay= (cA_netpay_amount/2).
++    else if (cA_netpay_period=3).
++    compute cA_wk_pay= (cA_netpay_amount/4.33).
++    else if (cA_netpay_period=4).
++    compute cA_wk_pay= (cA_netpay_amount/52.14).
++    end if.
+end if.
+variable label cA_wk_pay 'Weekly net pay. Non 0 pay only'.
+
+/** 	[2] Household (HH) earnings?
+/* 	Non-0 only. Weekly. Baseline in January/February 2020 and in April 2020.
+
+do if (cA_blhhearn_amount gt 0) . 
++    do if (cA_blhhearn_period=1 or cA_blhhearn_period=5).
++    compute cA_blwk_hhearn= cA_blhhearn_amount.
++    else if (cA_blhhearn_period=2).
++    compute cA_blwk_hhearn= (cA_blhhearn_amount/2).
++    else if (cA_blhhearn_period=3).
++    compute cA_blwk_hhearn= (cA_blhhearn_amount/4.33).
++    else if (cA_blhhearn_period=4).
++    compute cA_blwk_hhearn= (cA_blhhearn_amount/52.14).
++    end if.
+end if.
+variable label cA_blwk_hhearn 'Weekly Baseline HH earnings. Non 0  only'.
+
+do if (cA_hhearn_amount gt 0) . 
++    do if (cA_hhearn_period=1 or cA_hhearn_period=5).
++    compute cA_wk_hhearn= cA_hhearn_amount.
++    else if (cA_hhearn_period=2).
++    compute cA_wk_hhearn= (cA_hhearn_amount/2).
++    else if (cA_hhearn_period=3).
++    compute cA_wk_hhearn= (cA_hhearn_amount/4.33).
++    else if (cA_hhearn_period=4).
++    compute cA_wk_hhearn= (cA_hhearn_amount/52.14).
++    end if.
+end if.
+variable label cA_wk_hhearn 'Weekly HH earnings. Non 0  only'.
+
+
+/** 	[3] Financial situations
+/* 	Self-reported finances
+
+RECODE   cA_finnow  (1 thru 2=1)  (3 thru 5=0)  INTO  cA_fin_ok .
+VARIABLE LABELS cA_fin_ok 'How doing financially - current'.
+value labels cA_fin_ok 1 'Doing okay' 0 'Just about getting by/difficulties'.
+
+RECODE   cA_finnow  (1 =1)(2=2)(3=3)(4 thru 5=4)  INTO  cA_fin_ok2 .
+VARIABLE LABELS cA_fin_ok2 'How doing financially - current'.
+value labels cA_fin_ok2  1 'Living comfortably' 2 'Doing alright' 3 'Just about getting by' 4 'Finding it difficult'.
